@@ -1,0 +1,5 @@
+; $Id$ 
+name = Compass
+description = Compass builder
+core = 6.x
+dependencies[] = devel
