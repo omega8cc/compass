@@ -1,5 +1,5 @@
 ; $Id$ 
 name = Compass
-description = Compass builder
+description = Compass stylesheet framework tool support
 core = 6.x
 dependencies[] = devel
