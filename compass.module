@@ -292,16 +292,20 @@ function _compass_exec($command_args, &$output, &$errors) {
     1 => array('pipe', 'w'), // stdout
     2 => array('pipe', 'w')  // stderr
   );
-  $h = proc_open($compass_path .' '. $command_args, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT']);
-  if ($h) {
-    $output = '';
-    while (!feof($pipes[1])) {
-      $output .= fgets($pipes[1]);
-    }
+  if ($h = proc_open($compass_path .' '. $command_args, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT'])) {
+    fclose($pipes[0]);
+    stream_set_blocking($pipes[1], 0);
+    stream_set_blocking($pipes[2], 0);
 
+    $output = '';
     $errors = '';
-    while (!feof($pipes[2])) {
-      $errors .= fgets($pipes[2]);
+    while (!feof($pipes[1]) || !feof($pipes[2])) {
+      if (!feof($pipes[1])) {
+        $output .= stream_get_contents($pipes[1]);
+      }
+      if (!feof($pipes[2])) {
+        $errors .= stream_get_contents($pipes[2]);
+      }
     }
 
     // Display debugging information to authorized users.
@@ -314,7 +318,6 @@ function _compass_exec($command_args, &$output, &$errors) {
       drupal_set_message(t('Compass reported an error: @error', array('@error' => $errors)), 'error');
     }
 
-    fclose($pipes[0]);
     fclose($pipes[1]);
     fclose($pipes[2]);
     return proc_close($h);
