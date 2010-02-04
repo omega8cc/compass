@@ -311,11 +311,11 @@ function _compass_exec($command_args, &$output, &$errors) {
     // Display debugging information to authorized users.
     if (variable_get('compass_debugging', FALSE) && user_access('administer site configuration')) {
       drupal_set_message(t('Compass command: @command', array('@command' => $compass_path .' '. $command_args)));
-      drupal_set_message(t('Compass output: @output', array('@output' => $output)));
+      drupal_set_message(t('Compass output: !output', array('!output' => '<pre>'. $output .'</pre>')));
     }
 
     if ($errors) {
-      drupal_set_message(t('Compass reported an error: @error', array('@error' => $errors)), 'error');
+      drupal_set_message(t('Compass reported an error: !error', array('!error' => '<pre>'. $errors .'</pre>')), 'error');
     }
 
     fclose($pipes[1]);
