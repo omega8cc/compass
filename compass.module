@@ -271,7 +271,7 @@ function _compass_update($theme, &$output, &$errors) {
 // http://wiki.github.com/chriseppstein/compass/command-line-tool
 
 function _compass_exec($command_args, &$output, &$errors) {
-  $compass_path = variable_get('compass_path', '/usr/bin/convert');
+  $compass_path = variable_get('compass_path', '/usr/bin/compass');
   $errors = _compass_check_path($compass_path);
   if ($errors) {
     watchdog('compass', '!errors', array('!errors' => implode('<br />', $errors)), WATCHDOG_ERROR);
