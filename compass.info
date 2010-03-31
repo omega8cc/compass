@@ -3,4 +3,3 @@ name = Compass
 description = Compass stylesheet framework tool support
 core = 6.x
 php = 5.x
-dependencies[] = devel

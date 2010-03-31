@@ -33,13 +33,15 @@ function compass_help($path, $arg) {
  */
 function compass_menu() {
   $items = array();
-  $items['devel/compass'] = array(
-    'title' => 'Run Compass',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('compass_process'),
-    'access arguments' => array('access devel information'),
-    'menu_name' => 'devel',
-  );
+  if (module_exists('devel')) {
+    $items['devel/compass'] = array(
+      'title' => 'Run Compass',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('compass_process'),
+      'access arguments' => array('access devel information'),
+      'menu_name' => 'devel',
+    );
+  }
   $items['admin/settings/compass'] = array(
     'title' => 'Compass',
     'page callback' => 'drupal_get_form',
