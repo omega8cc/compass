@@ -329,3 +329,19 @@ function _compass_exec($command_args = '', &$output, &$errors) {
   }
   return FALSE;
 }
+
+/**
+ * Implement hook_theme_registry_alter().
+ *
+ * Devel module optionally resets the theme registry on each page request. Every
+ * theme's cached registry is cleared, but only the active theme is rebuilt
+ * for any given page request, so the key in the global $theme variable is
+ * sufficient to check.
+ */
+function compass_theme_registry_alter(&$theme_registry) {
+  global $theme;
+  $themes = list_themes();
+  if (isset($themes[$theme]->info['compass']['status'])) {
+    _compass_update($themes[$theme]->name, $output, $errors);
+  }
+}
