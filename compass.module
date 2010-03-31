@@ -267,6 +267,7 @@ function _compass_update($theme, &$output, &$errors) {
     $command_args .= '--'. str_replace('_', '-', $key) .' '. $value .' ';
   }
   _compass_exec($command_args, $output, $errors);
+  drupal_clear_css_cache();
 }
 
 // http://wiki.github.com/chriseppstein/compass/command-line-tool
