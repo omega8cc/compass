@@ -1,12 +1,12 @@
 <?php
-// $Id$ 
+// $Id$
 
 /**
- * @file 
+ * @file
  */
 
 /**
- * Implementation of hook_uninstall() 
+ * Implementation of hook_uninstall().
  */
 function compass_uninstall() {
   variable_del('compass_path');
