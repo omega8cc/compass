@@ -87,7 +87,9 @@ function compass_cron() {
     $themes = list_themes();
     foreach ($themes as $theme) {
       if ($theme->status && isset($theme->info['compass']['status'])) {
-        _compass_update($theme->name, $output, $errors);
+        $cmd = _compass_update($theme->name);
+        _compass_exec($cmd, $output, $errors);
+        drupal_clear_css_cache();
         watchdog('compass', 'Compass run on %theme', array('%theme' => $theme->info['name']));
       }
     }
