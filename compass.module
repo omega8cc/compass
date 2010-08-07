@@ -349,8 +349,10 @@ function _compass_exec($command, $command_args, &$output, &$errors) {
  */
 function compass_theme_registry_alter(&$theme_registry) {
   global $theme;
-  $themes = list_themes();
-  if (isset($themes[$theme]->info['compass']['status'])) {
-    _compass_update($themes[$theme]->name, $output, $errors);
+  if (variable_get('devel_rebuild_theme_registry', FALSE) && variable_get('compass_devel_rebuild', FALSE)) {
+    $themes = list_themes();
+    if (isset($themes[$theme]->info['compass']['status'])) {
+      _compass_update($themes[$theme]->name, $output, $errors);
+    }
   }
 }
