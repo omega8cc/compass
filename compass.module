@@ -107,7 +107,9 @@ function compass_process($form_state) {
   }
   drupal_set_title('Compass');
   if (isset($themes[$sass_theme]->info['compass']) && $themes[$sass_theme]->info['compass']['status']) {
-    _compass_update($sass_theme, $output, $errors);
+    $cmd = _compass_update($sass_theme);
+    _compass_exec($cmd, $output, $errors);
+    drupal_clear_css_cache();
   }
   else {
     $output = 'Compass is not enabled for this theme.';
@@ -219,7 +221,7 @@ function _compass_build_version($form_element, $form_state) {
     );
   }
   else {
-    _compass_exec('version', '', $output, $errors);
+    _compass_exec('version', $output, $errors);
     $form_element['compass_binary']['version'] = array(
       '#title' => t('Version information'),
       '#value' => '<pre>'. check_plain(trim($output)) .'</pre>',
@@ -252,7 +254,7 @@ function _compass_check_path($path) {
   return $errors;
 }
 
-function _compass_update($theme, &$output, &$errors) {
+function _compass_update($theme) {
   $themes = list_themes();
   $theme = $themes[$theme];
 
@@ -278,13 +280,12 @@ function _compass_update($theme, &$output, &$errors) {
     }
     $command_args .= ' ';
   }
-  _compass_exec($command, $command_args, $output, $errors);
-  drupal_clear_css_cache();
+  return $command .' '. $command_args;
 }
 
 // http://wiki.github.com/chriseppstein/compass/command-line-tool
 
-function _compass_exec($command, $command_args, &$output, &$errors) {
+function _compass_exec($command, &$output, &$errors) {
   $compass_path = variable_get('compass_path', '/usr/bin/compass');
   $errors = _compass_check_path($compass_path);
   if ($errors) {
@@ -306,7 +307,7 @@ function _compass_exec($command, $command_args, &$output, &$errors) {
     1 => array('pipe', 'w'), // stdout
     2 => array('pipe', 'w')  // stderr
   );
-  if ($h = proc_open($compass_path .' '. $command .' '. $command_args, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT'])) {
+  if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT'])) {
     fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
@@ -324,7 +325,7 @@ function _compass_exec($command, $command_args, &$output, &$errors) {
 
     // Display debugging information to authorized users.
     if (variable_get('compass_debugging', FALSE) && user_access('administer site configuration')) {
-      drupal_set_message(t('Compass command: @command', array('@command' => $compass_path .' '. $command_args)));
+      drupal_set_message(t('Compass command: @command', array('@command' => $compass_path .' '. $command)));
       drupal_set_message(t('Compass output: !output', array('!output' => '<pre>'. $output .'</pre>')));
     }
 
@@ -352,7 +353,9 @@ function compass_theme_registry_alter(&$theme_registry) {
   if (variable_get('devel_rebuild_theme_registry', FALSE) && variable_get('compass_devel_rebuild', FALSE)) {
     $themes = list_themes();
     if (isset($themes[$theme]->info['compass']['status'])) {
-      _compass_update($themes[$theme]->name, $output, $errors);
+      $cmd = _compass_update($themes[$theme]->name);
+      _compass_exec($cmd, $output, $errors);
+      drupal_clear_css_cache();
     }
   }
 }
