@@ -23,7 +23,7 @@ function compass_process($form_state) {
       $options[$key] = $value->info['name'];
     }
   }
-  drupal_set_title('Compass');
+  drupal_set_title(t('Compass'));
   if (isset($themes[$sass_theme]->info['compass']) && $themes[$sass_theme]->info['compass']['status']) {
     $cmd = _compass_update($sass_theme);
     _compass_exec($cmd, $output, $errors);
