@@ -57,3 +57,11 @@ function compass_process($form_state) {
   return $form;
 }
 
+/**
+ * Submit function
+ */
+function compass_process_submit($form, &$form_state) {
+  if ($form_state['clicked_button']['#value'] == t('Compile')) {
+    $form_state['rebuild'] = TRUE;
+  }
+}

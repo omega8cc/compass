@@ -68,3 +68,32 @@ function compass_settings_form() {
   );
   return system_settings_form($form);
 }
+
+function _compass_build_version($form_element, $form_state) {
+  // make sure path is set and valid before running after build.
+  if ($path_errors = _compass_check_path($form_state['values']['compass_path'])) {
+    // check here is primarily for pre-existing bad settings...
+    // the #validate should prevent users from adding bad paths.
+    $form_element['compass_binary'] = array(
+      '#value' => '<p class="error">'. implode('<br />', $path_errors) .'</p>',
+    );
+  }
+  else {
+    _compass_exec('version', $output, $errors);
+    $form_element['compass_binary']['version'] = array(
+      '#title' => t('Version information'),
+      '#value' => '<pre>'. check_plain(trim($output)) .'</pre>',
+      '#description' => t('The <kbd>compass</kbd> binary was located and return this version information.'),
+    );
+  }
+  $form_element['compass_binary']['version']['#type'] = 'item';
+  $form_element['compass_binary']['version']['#weight'] = -1;
+  return $form_element;
+}
+
+function compass_validate_path($element, &$form_state) {
+  $errors = _compass_check_path($element['#value']);
+  if ($errors) {
+    form_set_error($element['#parents'][0], implode('<br />', $errors));
+  }
+}
