@@ -11,6 +11,7 @@
  */
 function compass_process($form_state) {
   global $theme;
+  module_load_include('inc', 'compass');
 
   init_theme();
   $themes = list_themes();

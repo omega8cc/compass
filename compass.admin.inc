@@ -70,6 +70,7 @@ function compass_settings_form() {
 }
 
 function _compass_build_version($form_element, $form_state) {
+  module_load_include('inc', 'compass');
   // make sure path is set and valid before running after build.
   if ($path_errors = _compass_check_path($form_state['values']['compass_path'])) {
     // check here is primarily for pre-existing bad settings...

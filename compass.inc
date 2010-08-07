@@ -1,0 +1,107 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ *   Compass helper functions.
+ */
+
+function _compass_check_path($path) {
+  $errors = array();
+  if (!is_file($path)) {
+    $errors[] = t('The specified Compass path %file does not exist.', array('%file' => $path));
+  }
+  if (!$errors && !is_executable($path)) {
+    $errors[] = t('The specified Compass path %file is not executable.', array('%file' => $path));
+  }
+  if ($errors && $open_basedir = ini_get('open_basedir')) {
+    $errors[] = t('PHP\'s <a href="!open-basedir">open_basedir</a> security restriction is set to %open-basedir, which may be interfering with attempts to locate Compass.', array('%file' => $path, '%open-basedir' => $open_basedir, '!info-link' => url('http://php.net/features.safe-mode#ini.open-basedir')));
+  }
+  return $errors;
+}
+
+function _compass_update($theme) {
+  $themes = list_themes();
+  $theme = $themes[$theme];
+
+  $command = 'compile '. getcwd() .'/'. dirname($theme->filename);
+
+  $args = array();
+  $args = $theme->info['compass'];
+  unset($args['status']);
+  $args['boring'] = '';
+  $args['output_style'] = variable_get('compass_output_style', 'nested');
+  $args['environment'] = variable_get('compass_environment', 'production');
+  if (variable_get('compass_relative_assets', FALSE) === TRUE) {
+    $args['relative_assets'] = variable_get('compass_relative_assets', FALSE);
+  }
+  $command_args = '';
+  foreach ($args as $key => $value) {
+    $key = str_replace('_', '-', $key);
+    if (!empty($value)) {
+      $command_args .= '--'. $key .' '. $value;
+    }
+    else {
+      $command_args .= '--'. $key;
+    }
+    $command_args .= ' ';
+  }
+  return $command .' '. $command_args;
+}
+
+// http://wiki.github.com/chriseppstein/compass/command-line-tool
+
+function _compass_exec($command, &$output, &$errors) {
+  $compass_path = variable_get('compass_path', '/usr/bin/compass');
+  $errors = _compass_check_path($compass_path);
+  if ($errors) {
+    watchdog('compass', '!errors', array('!errors' => implode('<br />', $errors)), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  // TODO determine whether this module has any hope of ever working on Windows
+  if (strstr($_SERVER['SERVER_SOFTWARE'], 'Win32') || strstr($_SERVER['SERVER_SOFTWARE'], 'IIS')) {
+    // Use Window's start command to avoid the "black window" from showing up:
+    // http://us3.php.net/manual/en/function.exec.php#56599
+    // Use /D to run the command from PHP's current working directory so the
+    // file paths don't have to be absolute.
+    $compass_path = 'start "window title" /D'. escapeshellarg(getcwd()) .' /B '. escapeshellarg($compass_path);
+  }
+
+  $descriptors = array(
+    0 => array('pipe', 'r'), // stdin
+    1 => array('pipe', 'w'), // stdout
+    2 => array('pipe', 'w')  // stderr
+  );
+  if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT'])) {
+    fclose($pipes[0]);
+    stream_set_blocking($pipes[1], 0);
+    stream_set_blocking($pipes[2], 0);
+
+    $output = '';
+    $errors = '';
+    while (!feof($pipes[1]) || !feof($pipes[2])) {
+      if (!feof($pipes[1])) {
+        $output .= stream_get_contents($pipes[1]);
+      }
+      if (!feof($pipes[2])) {
+        $errors .= stream_get_contents($pipes[2]);
+      }
+    }
+
+    // Display debugging information to authorized users.
+    if (variable_get('compass_debugging', FALSE) && user_access('administer site configuration')) {
+      drupal_set_message(t('Compass command: @command', array('@command' => $compass_path .' '. $command)));
+      drupal_set_message(t('Compass output: !output', array('!output' => '<pre>'. $output .'</pre>')));
+    }
+
+    if ($errors) {
+      drupal_set_message(t('Compass reported an error: !error', array('!error' => '<pre>'. $errors .'</pre>')), 'error');
+    }
+
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    return proc_close($h);
+  }
+  return FALSE;
+}

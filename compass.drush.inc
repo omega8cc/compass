@@ -52,6 +52,7 @@ function compass_drush_help($section) {
  * Compass drush command callback.
  */
 function drush_compass_compile($theme) {
+  module_load_include('inc', 'compass');
   $cmd = _compass_update($theme);
   $exec_result = drush_shell_exec(variable_get('compass_path', '/usr/bin/compass') .' '. $cmd);
   foreach (drush_shell_exec_output() as $line) {
