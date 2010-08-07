@@ -66,6 +66,12 @@ function compass_settings_form() {
     '#type' => 'checkbox',
     '#default_value' => variable_get('compass_cron', TRUE),
   );
+  $form['compass_devel_rebuild'] = array(
+    '#title' => 'Run <em>compass</em> during devel theme rebuild',
+    '#type' => 'checkbox',
+    '#description' => t('Requires !devel_rebuild_theme_registry to be enabled.', array('!devel_rebuild_theme_registry' => l('devel_rebuild_theme_registry', 'admin/settings/devel'))),
+    '#default_value' => variable_get('compass_devel_rebuild', FALSE),
+  );
   return system_settings_form($form);
 }
 
