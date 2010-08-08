@@ -32,8 +32,8 @@ function _compass_update($theme) {
   $args['boring'] = '';
   $args['output_style'] = variable_get('compass_output_style', 'nested');
   $args['environment'] = variable_get('compass_environment', 'production');
-  if (variable_get('compass_relative_assets', FALSE) === TRUE) {
-    $args['relative_assets'] = variable_get('compass_relative_assets', FALSE);
+  if (variable_get('compass_relative_assets', FALSE)) {
+    $args['relative_assets'] = '';
   }
   $command_args = '';
   foreach ($args as $key => $value) {
@@ -73,7 +73,7 @@ function _compass_exec($command, &$output, &$errors) {
     1 => array('pipe', 'w'), // stdout
     2 => array('pipe', 'w')  // stderr
   );
-  if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, $_SERVER['DOCUMENT_ROOT'])) {
+  if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, base_path())) {
     fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
