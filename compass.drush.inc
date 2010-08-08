@@ -59,3 +59,14 @@ function drush_compass_compile($theme) {
     drush_print($line);
   }
 }
+
+/**
+ * Implementation of drush_COMMAND_validate().
+ *
+ * @see drush_compass_compile()
+ */
+function drush_compass_compile_validate($theme = NULL) {
+  if (empty($theme)) {
+    return drush_set_error('DRUSH_FRAMEWORK_ERROR', dt('You must specify a theme.'));
+  }
+}
