@@ -20,6 +20,21 @@ function _compass_check_path($path) {
   return $errors;
 }
 
+function _compass_options($options) {
+  $output = '';
+  foreach ($options as $key => $value) {
+    $key = str_replace('_', '-', $key);
+    if (!empty($value)) {
+      $output .= '--'. $key .' '. $value;
+    }
+    else {
+      $output .= '--'. $key;
+    }
+    $output .= ' ';
+  }
+  return $output;
+}
+
 function _compass_update($theme) {
   $themes = list_themes();
   $theme = $themes[$theme];
@@ -35,18 +50,7 @@ function _compass_update($theme) {
   if (variable_get('compass_relative_assets', FALSE)) {
     $args['relative_assets'] = '';
   }
-  $command_args = '';
-  foreach ($args as $key => $value) {
-    $key = str_replace('_', '-', $key);
-    if (!empty($value)) {
-      $command_args .= '--'. $key .' '. $value;
-    }
-    else {
-      $command_args .= '--'. $key;
-    }
-    $command_args .= ' ';
-  }
-  return $command .' '. $command_args;
+  return $command .' '. _compass_options($args);
 }
 
 // http://wiki.github.com/chriseppstein/compass/command-line-tool
