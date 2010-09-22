@@ -61,7 +61,7 @@ function compass_menu() {
  * See devel_translated_menu_link_alter().
  *
  */
-function compass_menu_link_alter(&$item, &$menu) {
+function compass_menu_link_alter(&$item, $menu) {
   if ($item['link_path'] == 'devel/compass') {
     $item['options']['alter'] = TRUE;
   }
