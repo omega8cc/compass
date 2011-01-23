@@ -71,7 +71,7 @@ function compass_settings_form() {
     '#type' => 'checkbox',
     '#title' => 'Relative Assets',
     '#description' => 'Indicates whether the compass helper functions should generate relative urls from the generated css to assets, or absolute urls using the http path for that asset type.',
-    '#default_value' => variable_get('compass_relative_assets', FALSE)
+    '#default_value' => variable_get('compass_relative_assets', FALSE),
   );
   $form['compass_cron'] = array(
     '#title' => 'Run <em>compass</em> during cron tasks',
@@ -94,14 +94,14 @@ function _compass_build_version($form_element, $form_state) {
     // check here is primarily for pre-existing bad settings...
     // the #validate should prevent users from adding bad paths.
     $form_element['compass_binary'] = array(
-      '#value' => '<p class="error">'. implode('<br />', $path_errors) .'</p>',
+      '#value' => '<p class="error">' . implode('<br />', $path_errors) . '</p>',
     );
   }
   else {
     _compass_exec('version', $output, $errors);
     $form_element['compass_binary']['version'] = array(
       '#title' => t('Version information'),
-      '#value' => '<pre>'. check_plain(trim($output)) .'</pre>',
+      '#value' => '<pre>' . check_plain(trim($output)) . '</pre>',
       '#description' => t('The <kbd>compass</kbd> binary was located and return this version information.'),
     );
   }
@@ -110,6 +110,10 @@ function _compass_build_version($form_element, $form_state) {
   return $form_element;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function compass_validate_path($element, &$form_state) {
   $errors = _compass_check_path($element['#value']);
   if ($errors) {

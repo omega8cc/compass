@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_drush_command().
+ * Implements hook_drush_command().
  */
 function compass_drush_command() {
   $items = array();
@@ -30,7 +30,7 @@ function compass_drush_command() {
 }
 
 /**
- * Implementation of hook_drush_help().
+ * Implements hook_drush_help().
  *
  * This function is called whenever a drush user calls
  * 'drush help <name-of-your-command>'
@@ -54,7 +54,7 @@ function compass_drush_help($section) {
 function drush_compass_compile($theme) {
   module_load_include('inc', 'compass');
   $cmd = _compass_update($theme);
-  $exec_result = drush_shell_exec(variable_get('compass_path', '/usr/bin/compass') .' '. $cmd);
+  $exec_result = drush_shell_exec(variable_get('compass_path', '/usr/bin/compass') . ' ' . $cmd);
   if ($exec_result && drush_get_context('DRUSH_VERBOSE')) {
     foreach (drush_shell_exec_output() as $line) {
       drush_print($line);
@@ -63,7 +63,7 @@ function drush_compass_compile($theme) {
 }
 
 /**
- * Implementation of drush_COMMAND_validate().
+ * Implements drush_COMMAND_validate().
  *
  * @see drush_compass_compile()
  */

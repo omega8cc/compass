@@ -25,10 +25,10 @@ function _compass_options($options) {
   foreach ($options as $key => $value) {
     $key = str_replace('_', '-', $key);
     if (!empty($value)) {
-      $output .= '--'. $key .' '. $value;
+      $output .= '--' . $key . ' ' . $value;
     }
     else {
-      $output .= '--'. $key;
+      $output .= '--' . $key;
     }
     $output .= ' ';
   }
@@ -39,7 +39,7 @@ function _compass_update($theme) {
   $themes = list_themes();
   $theme = $themes[$theme];
 
-  $command = 'compile '. getcwd() .'/'. dirname($theme->filename);
+  $command = 'compile ' . getcwd() . '/' . dirname($theme->filename);
 
   $args = array();
   $args = $theme->info['compass'];
@@ -50,7 +50,7 @@ function _compass_update($theme) {
   if (variable_get('compass_relative_assets', FALSE)) {
     $args['relative_assets'] = '';
   }
-  return $command .' '. _compass_options($args);
+  return $command . ' ' . _compass_options($args);
 }
 
 // http://wiki.github.com/chriseppstein/compass/command-line-tool
@@ -69,13 +69,13 @@ function _compass_exec($command, &$output, &$errors) {
     // http://us3.php.net/manual/en/function.exec.php#56599
     // Use /D to run the command from PHP's current working directory so the
     // file paths don't have to be absolute.
-    $compass_path = 'start "window title" /D'. escapeshellarg(getcwd()) .' /B '. escapeshellarg($compass_path);
+    $compass_path = 'start "window title" /D' . escapeshellarg(getcwd()) . ' /B ' . escapeshellarg($compass_path);
   }
 
   $descriptors = array(
     0 => array('pipe', 'r'), // stdin
     1 => array('pipe', 'w'), // stdout
-    2 => array('pipe', 'w')  // stderr
+    2 => array('pipe', 'w'), // stderr
   );
 
   $env = array();
@@ -89,7 +89,7 @@ function _compass_exec($command, &$output, &$errors) {
     $env['GEM_PATH'] = variable_get('compass_gem_path', NULL) . ':' . shell_exec('gem env GEM_PATH');
   }
 
-  if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, base_path())) {
+  if ($h = proc_open($compass_path . ' ' . $command, $descriptors, $pipes, base_path())) {
     fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
@@ -107,8 +107,8 @@ function _compass_exec($command, &$output, &$errors) {
 
     // Display debugging information to authorized users.
     if (variable_get('compass_debugging', FALSE) && user_access('administer site configuration')) {
-      drupal_set_message(t('Compass command: @command', array('@command' => $compass_path .' '. $command)));
-      drupal_set_message(t('Compass output: !output', array('!output' => '<pre>'. $output .'</pre>')));
+      drupal_set_message(t('Compass command: @command', array('@command' => $compass_path . ' ' . $command)));
+      drupal_set_message(t('Compass output: !output', array('!output' => '<pre>' . $output . '</pre>')));
     }
 
     if ($errors) {

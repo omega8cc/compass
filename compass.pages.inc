@@ -31,6 +31,9 @@ function compass_process($form_state) {
     drupal_clear_css_cache();
   }
   else {
+
+    // TODO: Improve this message. It appears on first build when the current
+    // theme (often the admin theme) is not compass enabled.
     $output = 'Compass is not enabled for this theme.';
   }
   $form['#attributes'] = array(

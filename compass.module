@@ -10,18 +10,18 @@
  */
 
 /**
- * Implementation of hook_help().
+ * Implements hook_help().
  */
 function compass_help($path, $arg) {
   switch ($path) {
     case 'admin/help#compass':
-      $output = '<p>'. t('Compass module supports the !compass_link framework tool in your Drupal theme development workflow. Compass stylesheets are optionally compiled at cron runs or on demand. You must configure your theme\'s info file for the module to work.', array('!compass_link' => l('Compass', 'http://wiki.github.com/chriseppstein/compass'))) .'</p>';
-      $output .= '<h2>'. t('Configuration') .'</h2>';
-      $output .= '<p>'. t('Add this line to your theme\'s .info file') .'</p>';
+      $output = '<p>' . t('Compass module supports the !compass_link framework tool in your Drupal theme development workflow. Compass stylesheets are optionally compiled at cron runs or on demand. You must configure your theme\'s info file for the module to work.', array('!compass_link' => l('Compass', 'http://wiki.github.com/chriseppstein/compass'))) . '</p>';
+      $output .= '<h2>' . t('Configuration') . '</h2>';
+      $output .= '<p>' . t('Add this line to your theme\'s .info file') . '</p>';
       $output .= '<pre><code>compass[status] = 1</code></pre>';
-      $output .= '<p>'. t('Other command line options can be specified using their long argument names with underscores ( %underscore ) instead of hyphens ( %hyphen ).', array('%underscore' => '_', '%hyphen' => '-')) .'</p>';
+      $output .= '<p>' . t('Other command line options can be specified using their long argument names with underscores ( %underscore ) instead of hyphens ( %hyphen ).', array('%underscore' => '_', '%hyphen' => '-')) . '</p>';
       $output .= '<pre><code>compass[sass_dir] = "src"</code></pre>';
-      $output .= '<p>'. t('If you have used compass to create your theme stylesheets, you can rely on the config.rb in the theme\'s directory') .'</p>';
+      $output .= '<p>' . t('If you have used compass to create your theme stylesheets, you can rely on the config.rb in the theme\'s directory') . '</p>';
       return $output;
     default:
       break;
@@ -29,7 +29,7 @@ function compass_help($path, $arg) {
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function compass_menu() {
   $items = array();
@@ -54,10 +54,10 @@ function compass_menu() {
 }
 
 /**
- * Implementation of hook_menu_link_alter().
+ * Implements hook_menu_link_alter().
  *
  * Flag this link as needing alter at display time.
- * This is more robust that setting alter in hook_menu().
+ * This is more robust than setting alter in hook_menu().
  * See devel_translated_menu_link_alter().
  *
  */
@@ -68,7 +68,7 @@ function compass_menu_link_alter(&$item, $menu) {
 }
 
 /**
- * Implementation of hook_translated_menu_item_alter().
+ * Implements hook_translated_menu_item_alter().
  *
  * Append dynamic querystring 'destination' to several of our own menu items.
  *
@@ -80,7 +80,7 @@ function compass_translated_menu_link_alter(&$item) {
 }
 
 /**
- * Implementation of hook_cron().
+ * Implements hook_cron().
  */
 function compass_cron() {
   if (variable_get('compass_cron', TRUE)) {
@@ -98,7 +98,7 @@ function compass_cron() {
 }
 
 /**
- * Implement hook_theme_registry_alter().
+ * Implements hook_theme_registry_alter().
  *
  * Devel module optionally resets the theme registry on each page request. Every
  * theme's cached registry is cleared, but only the active theme is rebuilt
