@@ -94,7 +94,6 @@ function _compass_exec($command, &$output, &$errors) {
   }
 
   if ($h = proc_open($compass_path . ' ' . $command, $descriptors, $pipes, $drupal_path, $env)) {
-    fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
 
@@ -109,19 +108,22 @@ function _compass_exec($command, &$output, &$errors) {
       }
     }
 
+    fclose($pipes[0]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $return_code = proc_close($h);
+
     // Display debugging information to authorized users.
     if (variable_get('compass_debugging', FALSE) && user_access('administer site configuration')) {
       drupal_set_message(t('Compass command: @command', array('@command' => $compass_path . ' ' . $command)));
       drupal_set_message(t('Compass output: !output', array('!output' => '<pre>' . $output . '</pre>')));
     }
 
-    if ($errors) {
+    if ($return_code != 0) {
       drupal_set_message(t('Compass reported an error: !error', array('!error' => '<pre>'. $errors .'</pre>')), 'error');
     }
 
-    fclose($pipes[1]);
-    fclose($pipes[2]);
-    return proc_close($h);
+    return $return_code;
   }
   return FALSE;
 }
