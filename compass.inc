@@ -118,7 +118,18 @@ function _compass_exec($command, &$output, &$errors) {
     }
 
     if ($return_code != 0) {
-      drupal_set_message(t('Compass reported an error: !error', array('!error' => '<pre>'. $errors .'</pre>')), 'error');
+      // If Compass returned a non-zero code, trigger a PHP error that will
+      // be caught by Drupal's error handler, logged to the watchdog and
+      // eventually displayed to the user if configured to do so.
+
+      // If $errors is empty, only report the error code.
+      if (empty($errors)) {
+        trigger_error(t('Compass reported error code !code.', array('!code' => $return_code)), E_USER_ERROR);
+      }
+      // Otherwise report the error code, and the error message.
+      else {
+        trigger_error(t("Compass reported error code !code.\nMessage:\n!error", array('!code' => $return_code, '!error' => $errors)), E_USER_ERROR);
+      }
     }
 
     return $return_code;
