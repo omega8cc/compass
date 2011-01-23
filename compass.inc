@@ -63,13 +63,17 @@ function _compass_exec($command, &$output, &$errors) {
     return FALSE;
   }
 
+  // Specify Drupal's root as the working a working directory so that relative
+  // paths are interpreted correctly.
+  $drupal_path = $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['SCRIPT_NAME'] ? $_SERVER['SCRIPT_NAME'] : $_SERVER['SCRIPT_FILENAME']);
+
   // TODO determine whether this module has any hope of ever working on Windows
   if (strstr($_SERVER['SERVER_SOFTWARE'], 'Win32') || strstr($_SERVER['SERVER_SOFTWARE'], 'IIS')) {
     // Use Window's start command to avoid the "black window" from showing up:
     // http://us3.php.net/manual/en/function.exec.php#56599
     // Use /D to run the command from PHP's current working directory so the
     // file paths don't have to be absolute.
-    $compass_path = 'start "window title" /D' . escapeshellarg(getcwd()) . ' /B ' . escapeshellarg($compass_path);
+    $compass_path = 'start "window title" /D' . escapeshellarg($drupal_path) . ' /B ' . escapeshellarg($compass_path);
   }
 
   $descriptors = array(
@@ -89,7 +93,7 @@ function _compass_exec($command, &$output, &$errors) {
     $env['GEM_PATH'] = variable_get('compass_gem_path', NULL) . ':' . shell_exec('gem env GEM_PATH');
   }
 
-  if ($h = proc_open($compass_path . ' ' . $command, $descriptors, $pipes, base_path())) {
+  if ($h = proc_open($compass_path . ' ' . $command, $descriptors, $pipes, $drupal_path, $env)) {
     fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
