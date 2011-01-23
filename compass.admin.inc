@@ -19,6 +19,18 @@ function compass_settings_form() {
   );
   $form['compass_binary']['version'] = array('#weight' => -1);
   $form['compass_binary']['#after_build'] = array('_compass_build_version');
+  $form['compass_binary']['compass_gem_home'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Gem home directory'),
+    '#default_value' => variable_get('compass_gem_home', NULL),
+    '#description' => t('Specify the complete path to the Gem home.'),
+  );
+  $form['compass_binary']['compass_gem_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Gem path'),
+    '#default_value' => variable_get('compass_gem_path', NULL),
+    '#description' => t('Specify any additions to the gem path.'),
+  );
   $form['compass_binary']['compass_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path of "compass" executable'),

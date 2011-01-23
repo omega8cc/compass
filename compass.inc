@@ -77,6 +77,18 @@ function _compass_exec($command, &$output, &$errors) {
     1 => array('pipe', 'w'), // stdout
     2 => array('pipe', 'w')  // stderr
   );
+
+  $env = array();
+  $gem_home = variable_get('compass_gem_home', NULL);
+  if (!empty($gem_home)) {
+    $env['GEM_HOME'] = variable_get('compass_gem_home', NULL);
+  }
+
+  $gem_path = variable_get('compass_gem_path', NULL);
+  if (!empty($gem_path)) {
+    $env['GEM_PATH'] = variable_get('compass_gem_path', NULL) . ':' . shell_exec('gem env GEM_PATH');
+  }
+
   if ($h = proc_open($compass_path .' '. $command, $descriptors, $pipes, base_path())) {
     fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
