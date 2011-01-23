@@ -16,16 +16,23 @@ function compass_process($form_state) {
   init_theme();
   $themes = list_themes();
 
-  $sass_theme = isset($form_state['values']['theme']) ? $form_state['values']['theme'] : $theme;
-
   $options = array();
   foreach ($themes as $key => $value) {
     if (isset($value->info['compass']) && $value->info['compass']['status']) {
       $options[$key] = $value->info['name'];
     }
   }
+
+  $sass_theme = FALSE;
+  if (isset($form_state['values']['theme'])) {
+    $sass_theme = $form_state['values']['theme'];
+  }
+  else if (isset($options[$theme])) {
+    $sass_theme = $theme;
+  }
+
   drupal_set_title(t('Compass'));
-  if (isset($themes[$sass_theme]->info['compass']) && $themes[$sass_theme]->info['compass']['status']) {
+  if ($sass_theme) {
     $cmd = _compass_update($sass_theme);
     _compass_exec($cmd, $output, $errors);
     drupal_clear_css_cache();
