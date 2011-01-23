@@ -96,8 +96,6 @@ function _compass_exec($command, &$output, &$errors) {
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
 
-    $output = '';
-    $errors = '';
     while (!feof($pipes[1]) || !feof($pipes[2])) {
       if (!feof($pipes[1])) {
         $output .= stream_get_contents($pipes[1]);
