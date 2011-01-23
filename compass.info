@@ -1,5 +1,11 @@
 ; $Id$
 name = Compass
 description = Compass stylesheet framework tool support
-core = 6.x
+core = 7.x
 php = 5.x
+files[] = compass.admin.inc
+files[] = compass.drush.inc
+files[] = compass.inc
+files[] = compass.install
+files[] = compass.module
+files[] = compass.pages.inc

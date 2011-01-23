@@ -43,7 +43,7 @@ function compass_menu() {
       'file' => 'compass.pages.inc',
     );
   }
-  $items['admin/settings/compass'] = array(
+  $items['admin/config/compass'] = array(
     'title' => 'Compass',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('compass_settings_form'),

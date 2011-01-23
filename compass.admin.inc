@@ -9,7 +9,7 @@
 /**
  * Settings form for the toolkit.
  */
-function compass_settings_form() {
+function compass_settings_form($form, &$form_state) {
   $form = array();
   $form['compass_binary'] = array(
     '#type' => 'fieldset',
@@ -22,13 +22,13 @@ function compass_settings_form() {
   $form['compass_binary']['compass_gem_home'] = array(
     '#type' => 'textfield',
     '#title' => t('Gem home directory'),
-    '#default_value' => variable_get('compass_gem_home', NULL),
+    '#default_value' => variable_get('compass_gem_home'),
     '#description' => t('Specify the complete path to the Gem home.'),
   );
   $form['compass_binary']['compass_gem_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Gem path'),
-    '#default_value' => variable_get('compass_gem_path', NULL),
+    '#default_value' => variable_get('compass_gem_path'),
     '#description' => t('Specify any additions to the gem path.'),
   );
   $form['compass_binary']['compass_path'] = array(
@@ -81,7 +81,7 @@ function compass_settings_form() {
   $form['compass_devel_rebuild'] = array(
     '#title' => 'Run <em>compass</em> during devel theme rebuild',
     '#type' => 'checkbox',
-    '#description' => t('Requires !devel_rebuild_theme_registry to be enabled.', array('!devel_rebuild_theme_registry' => l('devel_rebuild_theme_registry', 'admin/settings/devel'))),
+    '#description' => t('Requires !devel_rebuild_theme_registry to be enabled.', array('!devel_rebuild_theme_registry' => l('devel_rebuild_theme_registry', 'admin/config/devel'))),
     '#default_value' => variable_get('compass_devel_rebuild', FALSE),
   );
   return system_settings_form($form);
@@ -93,20 +93,22 @@ function _compass_build_version($form_element, $form_state) {
   if ($path_errors = _compass_check_path($form_state['values']['compass_path'])) {
     // check here is primarily for pre-existing bad settings...
     // the #validate should prevent users from adding bad paths.
-    $form_element['compass_binary'] = array(
-      '#value' => '<p class="error">' . implode('<br />', $path_errors) . '</p>',
+    $form_element['version'] = array(
+      '#type' => 'markup',
+      '#markup' => '<p class="error">' . implode('<br />', $path_errors) . '</p>',
     );
   }
   else {
     _compass_exec('version', $output, $errors);
-    $form_element['compass_binary']['version'] = array(
+    $form_element['version'] = array(
+      '#type' => 'markup',
       '#title' => t('Version information'),
-      '#value' => '<pre>' . check_plain(trim($output)) . '</pre>',
+      '#markup' => '<pre>' . check_plain(trim($output)) . '</pre>',
       '#description' => t('The <kbd>compass</kbd> binary was located and return this version information.'),
     );
   }
-  $form_element['compass_binary']['version']['#type'] = 'item';
-  $form_element['compass_binary']['version']['#weight'] = -1;
+  $form_element['version']['#type'] = 'item';
+  $form_element['version']['#weight'] = -1;
   return $form_element;
 }
 

@@ -9,11 +9,11 @@
 /**
  * Page callback shows compass output through a form for easy redirect
  */
-function compass_process($form_state) {
+function compass_process($form, $form_state) {
   global $theme;
   module_load_include('inc', 'compass');
 
-  init_theme();
+  drupal_theme_initialize();
   $themes = list_themes();
 
   $options = array();
@@ -62,7 +62,8 @@ function compass_process($form_state) {
   );
   $form['compass_output'] = array(
     '#prefix' => '<pre>',
-    '#value' => $output,
+    '#type' => 'markup',
+    '#markup' => $output,
     '#suffix' => '</pre>',
   );
   return $form;
