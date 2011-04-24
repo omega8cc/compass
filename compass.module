@@ -81,19 +81,42 @@ function compass_translated_menu_link_alter(&$item) {
 /**
  * Implements hook_cron().
  */
+function compass_cron_queue_info() {
+  $queues['compass_themes'] = array(
+    'worker callback' => 'compass_compile',
+    'time' => 15,
+  );
+  return $queues;
+}
+
+/**
+ * Implements hook_cron().
+ */
 function compass_cron() {
   if (variable_get('compass_cron', TRUE)) {
+    $queue = DrupalQueue::get('compass_themes');
     $themes = list_themes();
-    module_load_include('inc', 'compass');
-    foreach ($themes as $theme) {
-      if ($theme->status && isset($theme->info['compass']['status'])) {
-        $cmd = _compass_update($theme->name);
-        _compass_exec($cmd, $output, $errors);
-        drupal_clear_css_cache();
-        watchdog('compass', 'Compass run on %theme', array('%theme' => $theme->info['name']));
+    if (lock_acquire('compass', 240.0)) {
+      foreach ($themes as $theme) {
+        if ($theme->status && isset($theme->info['compass']['status'])) {
+          $queue->createItem($theme);
+        }
       }
     }
   }
+}
+
+/**
+ * Drupal queue worker callback.
+ *
+ * Compiles a compass enabled theme's stylesheets.
+ */
+function compass_compile($theme) {
+  module_load_include('inc', 'compass');
+  $cmd = _compass_update($theme->name);
+  _compass_exec($cmd, $output, $errors);
+  drupal_clear_css_cache();
+  watchdog('compass', 'Compass run on %theme', array('%theme' => $theme->info['name']));
 }
 
 /**
