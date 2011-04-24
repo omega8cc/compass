@@ -92,6 +92,8 @@ function _compass_exec($command, &$output, &$errors) {
     $env['GEM_PATH'] = variable_get('compass_gem_path', NULL) . ':' . shell_exec('gem env GEM_PATH');
   }
 
+  $env['HOME'] = '/';
+
   if ($h = proc_open($compass_path . ' ' . $command, $descriptors, $pipes, $drupal_path, $env)) {
     stream_set_blocking($pipes[1], 0);
     stream_set_blocking($pipes[2], 0);
