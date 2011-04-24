@@ -49,6 +49,8 @@ function _compass_update($theme) {
   if (variable_get('compass_relative_assets', FALSE)) {
     $args['relative_assets'] = '';
   }
+  $args['load'] = getcwd() . '/' . dirname($themes[$theme->base_theme]->filename);
+
   return $command . ' ' . _compass_options($args);
 }
 

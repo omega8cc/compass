@@ -83,6 +83,22 @@ function compass_settings_form($form, &$form_state) {
     '#description' => t('Requires !devel_rebuild_theme_registry to be enabled.', array('!devel_rebuild_theme_registry' => l('devel_rebuild_theme_registry', 'admin/config/devel'))),
     '#default_value' => variable_get('compass_devel_rebuild', FALSE),
   );
+
+  $themes = list_themes();
+  $options = array();
+  foreach ($themes as $theme) {
+    if ($theme->status && isset($theme->info['compass']['status']) && $theme->info['compass']['status'] && $theme->info['compass']['sass_dir'] == "stylesheets") {
+      $options[$theme->name] = $theme->info['name'];
+    }
+  }
+  $form['compass_load'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Additional load paths'),
+    '#default_value' => variable_get('compass_load', array()),
+    '#options' => $options,
+    '#description' => t('Load additional theme Sass as framework/extension, e.g. load base theme Sass so it can be imported by sub-theme. Sass folder <em>must</em> be named "stylesheets". Listed are themes with compass support enabled that can be loaded.'),
+  );
+
   return system_settings_form($form);
 }
 
