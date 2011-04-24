@@ -51,6 +51,7 @@ function _compass_update($theme) {
   }
   $args['load'] = getcwd() . '/' . dirname($themes[$theme->base_theme]->filename);
 
+  drupal_alter('compass_options', $args, $op);
   return $command . ' ' . _compass_options($args);
 }
 
