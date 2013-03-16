@@ -33,9 +33,9 @@ function compass_settings_form($form, &$form_state) {
   $form['compass_binary']['compass_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path of "compass" executable'),
-    '#default_value' => variable_get('compass_path', '/usr/bin/compass'),
+    '#default_value' => variable_get('compass_path', 'compass'),
     '#required' => TRUE,
-    '#description' => t('Specify the complete path to the Compass binary. For example: <kbd>/usr/bin/compass</kbd>'),
+    '#description' => t('Specify the path to the Compass binary.),
     '#element_validate' => array('compass_validate_path'),
   );
   $form['compass_binary']['compass_debugging'] = array(
