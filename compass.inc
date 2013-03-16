@@ -7,15 +7,27 @@
 
 function _compass_check_path($path) {
   $errors = array();
-  if (!is_file($path)) {
-    $errors[] = t('The specified Compass path %file does not exist.', array('%file' => $path));
+
+  // If only the name of the executable is given, we only check whether it is in
+  // the path and can be invoked.
+  if ($path != 'compass') {
+    // Check whether the given file exists.
+    if (!is_file($path)) {
+      $status['errors'][] = t('The specified Compass file path %file does not exist.', array('%file' => $path));
+    }
+    // If it exists, check whether we can execute it.
+    elseif (!is_executable($path)) {
+      $status['errors'][] = t('The specified Compass file path %file is not executable.', array('%file' => $path));
+    }
   }
-  if (!$errors && !is_executable($path)) {
-    $errors[] = t('The specified Compass path %file is not executable.', array('%file' => $path));
+  // In case of errors, check for open_basedir restrictions.
+  if ($status['errors'] && ($open_basedir = ini_get('open_basedir'))) {
+    $status['errors'][] = t('The PHP <a href="@php-url">open_basedir</a> security restriction is set to %open-basedir, which may prevent to locate Compass.', array(
+      '%open-basedir' => $open_basedir,
+      '@php-url' => 'http://php.net/manual/en/ini.core.php#ini.open-basedir',
+    ));
   }
-  if ($errors && $open_basedir = ini_get('open_basedir')) {
-    $errors[] = t('PHP\'s <a href="!open-basedir">open_basedir</a> security restriction is set to %open-basedir, which may be interfering with attempts to locate Compass.', array('%file' => $path, '%open-basedir' => $open_basedir, '!info-link' => url('http://php.net/features.safe-mode#ini.open-basedir')));
-  }
+
   return $errors;
 }
 
